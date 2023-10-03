@@ -1,0 +1,25 @@
+#include<iostream>
+using namespace std;
+
+//function overloading part1
+void sum(int x, int y)
+{
+    int add = x+y;
+    cout<<add<<endl;
+}
+
+//function overloading part2
+void sum(int x, int y, int z)
+{
+    int add = x+y+z;
+    cout<<add<<endl;
+}
+
+int main()
+{
+    sum(10,20);
+    sum(10,20,30);
+    cout<<"Thank you"<<endl;
+
+    return 0;
+}
