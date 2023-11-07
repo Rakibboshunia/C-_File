@@ -1,0 +1,123 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+// Structure to represent a reservation
+struct Reservation {
+    string passengerName;
+    int seatNumber;
+    bool isBooked;
+};
+
+// Function to book a reservation
+void bookReservation(Reservation reservations[], int seatCount) {
+    int seat;
+    cout << "Enter the seat number (1-" << seatCount << "): ";
+    cin >> seat;
+
+    if (seat < 1 || seat > seatCount) {
+        cout << "Invalid seat number." << endl;
+        return;
+    }
+
+    if (reservations[seat - 1].isBooked) {
+        cout << "Seat " << seat << " is already booked." << endl;
+    } else {
+        cout << "Enter passenger name: ";
+        cin.ignore();
+        getline(cin, reservations[seat - 1].passengerName);
+        reservations[seat - 1].seatNumber = seat;
+        reservations[seat - 1].isBooked = true;
+        cout << "Seat " << seat << " has been booked for " << reservations[seat - 1].passengerName << endl;
+    }
+}
+
+// Function to display all reservations
+void displayReservations(Reservation reservations[], int seatCount) {
+    cout << "Seat No\tPassenger Name" << endl;
+    for (int i = 0; i < seatCount; i++) {
+        if (reservations[i].isBooked) {
+            cout << reservations[i].seatNumber << "\t" << reservations[i].passengerName << endl;
+        }
+    }
+}
+
+// Function to save reservations to a text file
+void saveReservations(Reservation reservations[], int seatCount, const string& filename) {
+    ofstream file(filename);
+    if (file.is_open()) {
+        for (int i = 0; i < seatCount; i++) {
+            if (reservations[i].isBooked) {
+                file << reservations[i].seatNumber << " " << reservations[i].passengerName << endl;
+            }
+        }
+        file.close();
+        cout << "Reservations saved to " << filename << endl;
+    } else {
+        cout << "Unable to open the file for writing." << endl;
+    }
+}
+
+// Function to load reservations from a text file
+void loadReservations(Reservation reservations[], int seatCount, const string& filename) {
+    ifstream file(filename);
+    if (file.is_open()) {
+        int seat;
+        string passengerName;
+        while (file >> seat) {
+            file.ignore(); // Ignore space
+            getline(file, passengerName);
+            if (seat >= 1 && seat <= seatCount) {
+                reservations[seat - 1].seatNumber = seat;
+                reservations[seat - 1].passengerName = passengerName;
+                reservations[seat - 1].isBooked = true;
+            }
+        }
+        file.close();
+        cout << "Reservations loaded from " << filename << endl;
+    } else {
+        cout << "File not found. No reservations loaded." << endl;
+    }
+}
+
+int main() {
+    const int seatCount = 20; // Change this to the number of seats in your bus
+    Reservation reservations[seatCount];
+
+    const string filename = "bus_reservations.txt"; // Change this to your desired filename
+
+    loadReservations(reservations, seatCount, filename);
+
+    int choice;
+    while (true) {
+        cout << "\nBus Reservation System\n";
+        cout << "1. Book Reservation\n";
+        cout << "2. Display Reservations\n";
+        cout << "3. Save Reservations to File\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                bookReservation(reservations, seatCount);
+                break;
+            case 2:
+                displayReservations(reservations, seatCount);
+                break;
+            case 3:
+                saveReservations(reservations, seatCount, filename);
+                break;
+            case 4:
+                saveReservations(reservations, seatCount, filename); // Save before exiting
+                return 0;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+                break;
+        }
+    }
+
+    return 0;
+}
+
