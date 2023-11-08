@@ -5,7 +5,8 @@
 using namespace std;
 
 // Structure to represent a reservation
-struct Reservation {
+struct Reservation 
+{
     string passengerName;
     int seatNumber;
     bool isBooked;
