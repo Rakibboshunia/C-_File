@@ -1,0 +1,122 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+using namespace std;
+
+// Structure to represent a traffic signal
+struct TrafficSignal {
+    int signalId;
+    string location;
+    string status;
+};
+
+// Structure to represent a traffic violation
+struct TrafficViolation {
+    string vehicleNumber;
+    string violationType;
+    string timestamp;
+};
+
+// Function to load traffic signals from a text file
+vector<TrafficSignal> loadTrafficSignals(const string& filename) {
+    vector<TrafficSignal> signals;
+    ifstream file(filename);
+    if (file.is_open()) {
+        int signalId;
+        string location, status;
+        while (file >> signalId) {
+            file.ignore(); // Ignore space
+            getline(file, location);
+            getline(file, status);
+            signals.push_back({signalId, location, status});
+        }
+        file.close();
+        cout << "Traffic signals loaded from " << filename << endl;
+    } else {
+        cout << "File not found. No traffic signals loaded." << endl;
+    }
+    return signals;
+}
+
+// Function to save traffic signals to a text file
+void saveTrafficSignals(const vector<TrafficSignal>& signals, const string& filename) {
+    ofstream file(filename);
+    if (file.is_open()) {
+        for (const TrafficSignal& signal : signals) {
+            file << signal.signalId << " " << signal.location << endl;
+            file << signal.status << endl;
+        }
+        file.close();
+        cout << "Traffic signals saved to " << filename << endl;
+    } else {
+        cout << "Unable to open the file for writing." << endl;
+    }
+}
+
+// Function to record a traffic violation
+void recordTrafficViolation(vector<TrafficViolation>& violations) {
+    TrafficViolation violation;
+    cout << "Enter the vehicle number: ";
+    cin.ignore();
+    getline(cin, violation.vehicleNumber);
+    cout << "Enter the violation type: ";
+    getline(cin, violation.violationType);
+    cout << "Enter the timestamp: ";
+    getline(cin, violation.timestamp);
+    violations.push_back(violation);
+    cout << "Traffic violation recorded." << endl;
+}
+
+// Function to save traffic violations to a text file
+void saveTrafficViolations(const vector<TrafficViolation>& violations, const string& filename) {
+    ofstream file(filename, ios::app); // Append to the existing file
+    if (file.is_open()) {
+        for (const TrafficViolation& violation : violations) {
+            file << violation.vehicleNumber << " " << violation.violationType << " " << violation.timestamp << endl;
+        }
+        file.close();
+        cout << "Traffic violations saved to " << filename << endl;
+    } else {
+        cout << "Unable to open the file for writing." << endl;
+    }
+}
+
+int main() {
+    const string signalsFile = "traffic_signals.txt";
+    const string violationsFile = "traffic_violations.txt";
+
+    vector<TrafficSignal> signals = loadTrafficSignals(signalsFile);
+    vector<TrafficViolation> violations;
+
+    int choice;
+    while (true) {
+        cout << "\nTraffic Control Management System\n";
+        cout << "1. Record Traffic Violation\n";
+        cout << "2. View Traffic Signals\n";
+        cout << "3. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                recordTrafficViolation(violations);
+                saveTrafficViolations(violations, violationsFile);
+                break;
+            case 2:
+                cout << "Traffic Signals:\n";
+                for (const TrafficSignal& signal : signals) {
+                    cout << "Signal ID: " << signal.signalId << ", Location: " << signal.location << ", Status: " << signal.status << endl;
+                }
+                break;
+            case 3:
+                saveTrafficSignals(signals, signalsFile);
+                return 0;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+                break;
+        }
+    }
+
+    return 0;
+}
