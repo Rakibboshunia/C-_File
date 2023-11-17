@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -8,6 +9,7 @@ using namespace std;
 struct Meal 
 {
     string name;
+    string date;
     string description;
 };
 
@@ -17,7 +19,8 @@ void displayMenu()
     cout << "1. Add Meal\n";
     cout << "2. View Meals\n";
     cout << "3. Delete Meal\n";
-    cout << "4. Quit\n";
+    cout << "4. Save Meals\n";
+    cout << "5. Quit\n";
 }
 
 // Function to add a meal to the vector
@@ -27,6 +30,9 @@ void addMeal(vector<Meal>& meals)
     cout << "Enter meal name: ";
     getline(cin, meal.name);
 
+    cout << "Enter date (YYYY-MM-DD): ";
+    getline(cin, meal.date);
+    
     cout << "Enter meal description: ";
     getline(cin, meal.description);
 
@@ -38,43 +44,90 @@ void addMeal(vector<Meal>& meals)
 void viewMeals(const vector<Meal>& meals) 
 {
     if (meals.empty()) 
-        {
-            cout << "No meals available.\n";
-        } 
+    {
+        cout << "No meals available.\n";
+    } 
     else 
+    {
+        cout << "Meals:\n";
+        for (const Meal& meal : meals) 
         {
-            cout << "Meals:\n";
-            for (const Meal& meal : meals) 
-                {
-                    cout << "Name: " << meal.name << "\n";
-                    cout << "Description: " << meal.description << "\n\n";
-                }
+            cout << "Name: " << meal.name << "\n";
+            cout << "Date: " << meal.date << "\n";
+            cout << "Description: " << meal.description << "\n\n";
         }
+    }
 }
 
 // Function to delete a meal from the vector
 void deleteMeal(vector<Meal>& meals) 
 {
     if (meals.empty()) 
-        {
-            cout << "No meals available to delete.\n";
-        } 
+    {
+        cout << "No meals available to delete.\n";
+    } 
     else 
-        {
-            int index;
-            cout << "Enter the index of the meal to delete: ";
-            cin >> index;
+    {
+        int index;
+        cout << "Enter the index of the meal to delete: ";
+        cin >> index;
 
-            if (index >= 0 && index < meals.size()) 
-                {
-                    meals.erase(meals.begin() + index);
-                    cout << "Meal deleted successfully!\n";
-                }
-            else 
-                {
-                    cout << "Invalid index.\n";
-                }
+        if (index >= 0 && index < meals.size()) 
+        {
+            meals.erase(meals.begin() + index);
+            cout << "Meal deleted successfully!\n";
         }
+        else 
+        {
+            cout << "Invalid index.\n";
+        }
+    }
+}
+
+// Function to save meals to a file
+void saveMeals(const vector<Meal>& meals, const string& filename) 
+{
+    ofstream outfile(filename);
+
+    if (outfile.is_open()) 
+    {
+        for (const Meal& meal : meals) 
+        {
+            outfile << meal.name << ',' << meal.description << ',' << meal.date << '\n';
+        }
+        cout << "Meals saved successfully!\n";
+        outfile.close();
+    } 
+    else 
+    {
+        cout << "Unable to open the file for saving.\n";
+    }
+}
+
+// Function to load meals from a file
+void loadMeals(vector<Meal>& meals, const string& filename) 
+{
+    ifstream infile(filename);
+
+    if (infile.is_open()) 
+    {
+        meals.clear();
+        Meal meal;
+
+        while (getline(infile, meal.name, ',') &&
+               getline(infile, meal.date, ',') &&
+               getline(infile, meal.description))
+        {
+            meals.push_back(meal);
+        }
+
+        cout << "Meals loaded successfully!\n";
+        infile.close();
+    } 
+    else 
+    {
+        cout << "Unable to open the file for loading.\n";
+    }
 }
 
 int main() 
@@ -83,14 +136,15 @@ int main()
 
     int choice;
 
-    do
+    do 
     {
         displayMenu();
         cout << "Enter your choice: ";
         cin >> choice;
         cin.ignore(); // Consume the newline character after entering the choice
 
-        switch (choice) {
+        switch (choice) 
+        {
             case 1:
                 addMeal(meals);
                 break;
@@ -101,13 +155,16 @@ int main()
                 deleteMeal(meals);
                 break;
             case 4:
+                saveMeals(meals, "meals.txt");
+                break;
+            case 5:
                 cout << "Exiting the program.\n";
                 break;
             default:
                 cout << "Invalid choice. Please try again.\n";
         }
     } 
-    while (choice != 4);
+    while (choice != 5);
 
     return 0;
 }
