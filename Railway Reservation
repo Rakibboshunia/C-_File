@@ -13,19 +13,23 @@ struct Reservation
 };
 
 // Function to book a reservation
-void bookReservation(Reservation reservations[], int seatCount) {
+void bookReservation(Reservation reservations[], int seatCount) 
+{
     int seat;
     cout << "Enter the seat number (1-" << seatCount << "): ";
     cin >> seat;
 
-    if (seat < 1 || seat > seatCount) {
+    if (seat < 1 || seat > seatCount) 
+    {
         cout << "Invalid seat number." << endl;
         return;
     }
 
-    if (reservations[seat - 1].isBooked) {
+    if (reservations[seat - 1].isBooked) 
+    {
         cout << "Seat " << seat << " is already booked." << endl;
-    } else {
+    } 
+    else {
         cout << "Enter passenger name: ";
         cin.ignore();
         getline(cin, reservations[seat - 1].passengerName);
@@ -36,41 +40,53 @@ void bookReservation(Reservation reservations[], int seatCount) {
 }
 
 // Function to display all reservations
-void displayReservations(Reservation reservations[], int seatCount) {
+void displayReservations(Reservation reservations[], int seatCount) 
+{
     cout << "Seat No\tPassenger Name" << endl;
-    for (int i = 0; i < seatCount; i++) {
-        if (reservations[i].isBooked) {
+    for (int i = 0; i < seatCount; i++) 
+    {
+        if (reservations[i].isBooked) 
+        {
             cout << reservations[i].seatNumber << "\t" << reservations[i].passengerName << endl;
         }
     }
 }
 
 // Function to save reservations to a text file
-void saveReservations(Reservation reservations[], int seatCount, const string& filename) {
+void saveReservations(Reservation reservations[], int seatCount, const string& filename) 
+{
     ofstream file(filename);
-    if (file.is_open()) {
-        for (int i = 0; i < seatCount; i++) {
-            if (reservations[i].isBooked) {
+    if (file.is_open()) 
+    {
+        for (int i = 0; i < seatCount; i++) 
+        {
+            if (reservations[i].isBooked) 
+            {
                 file << reservations[i].seatNumber << " " << reservations[i].passengerName << endl;
             }
         }
         file.close();
         cout << "Reservations saved to " << filename << endl;
-    } else {
+    } 
+    else {
         cout << "Unable to open the file for writing." << endl;
     }
 }
 
 // Function to load reservations from a text file
-void loadReservations(Reservation reservations[], int seatCount, const string& filename) {
+void loadReservations(Reservation reservations[], int seatCount, const string& filename) 
+{
     ifstream file(filename);
-    if (file.is_open()) {
+    if (file.is_open()) 
+    {
         int seat;
         string passengerName;
-        while (file >> seat) {
+        while (file >> seat) 
+        {
             file.ignore(); // Ignore space
             getline(file, passengerName);
-            if (seat >= 1 && seat <= seatCount) {
+            if (seat >= 1 && seat <= seatCount) 
+            {
                 reservations[seat - 1].seatNumber = seat;
                 reservations[seat - 1].passengerName = passengerName;
                 reservations[seat - 1].isBooked = true;
@@ -78,12 +94,14 @@ void loadReservations(Reservation reservations[], int seatCount, const string& f
         }
         file.close();
         cout << "Reservations loaded from " << filename << endl;
-    } else {
+    } 
+    else {
         cout << "File not found. No reservations loaded." << endl;
     }
 }
 
-int main() {
+int main() 
+{
     const int seatCount = 10; // Change this to the number of seats in your train
     Reservation reservations[seatCount];
 
@@ -92,7 +110,8 @@ int main() {
     loadReservations(reservations, seatCount, filename);
 
     int choice;
-    while (true) {
+    while (true) 
+    {
         cout << "\nRailway Reservation System\n";
         cout << "1. Book Reservation\n";
         cout << "2. Display Reservations\n";
@@ -101,7 +120,8 @@ int main() {
         cout << "Enter your choice: ";
         cin >> choice;
 
-        switch (choice) {
+        switch (choice) 
+        {
             case 1:
                 bookReservation(reservations, seatCount);
                 break;
